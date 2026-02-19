@@ -18,9 +18,8 @@
 
             <div class="ig-profile-stats">
                 <span><strong>{{ $stats['posts'] }}</strong> posts</span>
-                <span><strong>{{ $stats['likes_given'] }}</strong> likes given</span>
-                <span><strong>{{ $stats['likes_received'] }}</strong> likes received</span>
-                <span><strong>{{ $stats['comments_received'] }}</strong> comments received</span>
+                <span><strong>{{ $stats['likes'] }}</strong> likes</span>
+                <span><strong>{{ $stats['comments'] }}</strong> comments</span>
             </div>
 
             <p class="ig-profile-name">{{ $user->name }}</p>

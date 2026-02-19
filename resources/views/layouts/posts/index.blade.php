@@ -27,26 +27,30 @@
 
                 <div class="ig-post-body">
                     <div class="ig-post-actions">
-                        @if($likedByMe)
-                            <form action="{{ route('likes.destroy', $post->id) }}" method="POST">
-                                @csrf
+                        <form
+                            action="{{ $likedByMe ? route('likes.destroy', $post->id) : route('likes.store', $post->id) }}"
+                            method="POST"
+                            data-like-form
+                            data-liked="{{ $likedByMe ? '1' : '0' }}"
+                            data-store-url="{{ route('likes.store', $post->id) }}"
+                            data-destroy-url="{{ route('likes.destroy', $post->id) }}"
+                        >
+                            @csrf
+                            @if($likedByMe)
                                 @method('DELETE')
-                                <button type="submit" class="ig-icon-btn" aria-label="Unlike">
+                            @endif
+                            <button type="submit" class="ig-icon-btn" aria-label="{{ $likedByMe ? 'Unlike' : 'Like' }}">
+                                @if($likedByMe)
                                     <svg viewBox="0 0 24 24" class="ig-icon ig-heart-filled" aria-hidden="true">
                                         <path d="M12 21s-7-4.35-9.5-8.28C.3 9.2 2.1 5 6 5c2.2 0 3.4 1.3 4 2.2C10.6 6.3 11.8 5 14 5c3.9 0 5.7 4.2 3.5 7.72C19 16.65 12 21 12 21z"/>
                                     </svg>
-                                </button>
-                            </form>
-                        @else
-                            <form action="{{ route('likes.store', $post->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="ig-icon-btn" aria-label="Like">
+                                @else
                                     <svg viewBox="0 0 24 24" class="ig-icon" aria-hidden="true">
                                         <path d="M12 21s-7-4.35-9.5-8.28C.3 9.2 2.1 5 6 5c2.2 0 3.4 1.3 4 2.2C10.6 6.3 11.8 5 14 5c3.9 0 5.7 4.2 3.5 7.72C19 16.65 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="1.7"/>
                                     </svg>
-                                </button>
-                            </form>
-                        @endif
+                                @endif
+                            </button>
+                        </form>
 
                         <a href="{{ route('posts.show', $post->id) }}" class="ig-icon-btn" aria-label="Comment">
                             <svg viewBox="0 0 24 24" class="ig-icon" aria-hidden="true">
