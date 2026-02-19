@@ -12,10 +12,18 @@ class ProfileController extends Controller
     {
         $user->load([
             'posts' => function ($query) {
-                $query->latest()->with(['likes', 'comments']);
+                $query->latest()->withCount(['likes', 'comments']);
             },
         ]);
-        return view('profiles.index', compact('user'));
+
+        $stats = [
+            'posts' => $user->posts->count(),
+            'likes_given' => $user->likes()->count(),
+            'likes_received' => (int) $user->posts->sum('likes_count'),
+            'comments_received' => (int) $user->posts->sum('comments_count'),
+        ];
+
+        return view('profiles.index', compact('user', 'stats'));
     }
 
     public function edit(User $user)

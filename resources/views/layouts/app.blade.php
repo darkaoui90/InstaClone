@@ -1,4 +1,7 @@
 <!doctype html>
+@php
+    $isAuthScreen = request()->routeIs('login') || request()->routeIs('register');
+@endphp
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -17,70 +20,72 @@
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
-<body class="ig-app">
+<body class="ig-app{{ $isAuthScreen ? ' ig-auth-screen' : '' }}">
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light ig-navbar">
-            <div class="container ig-nav-wrap">
-                <a class="navbar-brand ig-brand" href="{{ auth()->check() ? route('dashboard') : url('/') }}">
-                    InstaClone
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+        @unless($isAuthScreen)
+            <nav class="navbar navbar-expand-md navbar-light ig-navbar">
+                <div class="container ig-nav-wrap">
+                    <a class="navbar-brand ig-brand" href="{{ auth()->check() ? route('dashboard') : url('/') }}">
+                        InstaClone
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto ig-nav-list">
-                        @auth
-                            <li class="nav-item">
-                                <a class="nav-link ig-nav-link" href="{{ route('dashboard') }}">Feed</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link ig-nav-link" href="{{ route('posts.create') }}">Create</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link ig-nav-link" href="{{ route('profile.show', Auth::id()) }}">Profile</a>
-                            </li>
-                        @endauth
-                    </ul>
-
-                    <ul class="navbar-nav ms-auto ig-auth-list">
-                        @guest
-                            @if (Route::has('login'))
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto ig-nav-list">
+                            @auth
                                 <li class="nav-item">
-                                    <a class="nav-link ig-nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                    <a class="nav-link ig-nav-link" href="{{ route('dashboard') }}">Feed</a>
                                 </li>
-                            @endif
-
-                            @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link ig-nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="nav-link ig-nav-link" href="{{ route('posts.create') }}">Create</a>
                                 </li>
-                            @endif
-                        @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle ig-nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
-                                </a>
+                                <li class="nav-item">
+                                    <a class="nav-link ig-nav-link" href="{{ route('profile.show', Auth::id()) }}">Profile</a>
+                                </li>
+                            @endauth
+                        </ul>
 
-                                <div class="dropdown-menu dropdown-menu-end ig-dropdown" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
+                        <ul class="navbar-nav ms-auto ig-auth-list">
+                            @guest
+                                @if (Route::has('login'))
+                                    <li class="nav-item">
+                                        <a class="nav-link ig-nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                    </li>
+                                @endif
+
+                                @if (Route::has('register'))
+                                    <li class="nav-item">
+                                        <a class="nav-link ig-nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    </li>
+                                @endif
+                            @else
+                                <li class="nav-item dropdown">
+                                    <a id="navbarDropdown" class="nav-link dropdown-toggle ig-nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                        {{ Auth::user()->name }}
                                     </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
-                </div>
-            </div>
-        </nav>
+                                    <div class="dropdown-menu dropdown-menu-end ig-dropdown" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{{ route('logout') }}"
+                                           onclick="event.preventDefault();
+                                                         document.getElementById('logout-form').submit();">
+                                            {{ __('Logout') }}
+                                        </a>
 
-        <main class="ig-main py-4">
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                            @csrf
+                                        </form>
+                                    </div>
+                                </li>
+                            @endguest
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        @endunless
+
+        <main class="{{ $isAuthScreen ? 'ig-auth-main' : 'ig-main py-4' }}">
             @yield('content')
         </main>
     </div>

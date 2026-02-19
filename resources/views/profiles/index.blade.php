@@ -2,16 +2,6 @@
 
 @section('content')
 <div class="container ig-profile-page">
-    @php
-        $postsCount = $user->posts->count();
-        $likesCount = $user->posts->sum(function ($post) {
-            return $post->likes->count();
-        });
-        $commentsCount = $user->posts->sum(function ($post) {
-            return $post->comments->count();
-        });
-    @endphp
-
     <section class="ig-profile-header">
         <img src="{{ $user->profile_image ? asset('storage/' . $user->profile_image) : 'https://via.placeholder.com/160' }}" class="ig-profile-avatar" alt="profile image">
 
@@ -27,9 +17,10 @@
             </div>
 
             <div class="ig-profile-stats">
-                <span><strong>{{ $postsCount }}</strong> posts</span>
-                <span><strong>{{ $likesCount }}</strong> likes</span>
-                <span><strong>{{ $commentsCount }}</strong> comments</span>
+                <span><strong>{{ $stats['posts'] }}</strong> posts</span>
+                <span><strong>{{ $stats['likes_given'] }}</strong> likes given</span>
+                <span><strong>{{ $stats['likes_received'] }}</strong> likes received</span>
+                <span><strong>{{ $stats['comments_received'] }}</strong> comments received</span>
             </div>
 
             <p class="ig-profile-name">{{ $user->name }}</p>
@@ -46,8 +37,8 @@
                 <a href="{{ route('posts.show', $post->id) }}" class="ig-grid-item">
                     <img src="{{ asset('storage/' . $post->image_path) }}" alt="post image">
                     <div class="ig-grid-overlay">
-                        <span>{{ $post->likes->count() }} likes</span>
-                        <span>{{ $post->comments->count() }} comments</span>
+                        <span>{{ $post->likes_count }} likes</span>
+                        <span>{{ $post->comments_count }} comments</span>
                     </div>
                 </a>
             @empty
